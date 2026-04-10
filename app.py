@@ -114,3 +114,29 @@ async def predict_video(file: UploadFile = File(...)):
         media_type="video/mp4",
         filename="annotated_output.mp4"
     )
+
+@app.post("/predict-count")
+async def predict_count(file: UploadFile = File(...)):
+    start = time.time()
+    logging.info("Request received (COUNT endpoint)")
+
+    contents = await file.read()
+    nparr = np.frombuffer(contents, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+    _, detections = run_inference(img)
+
+    count = {"bat": 0, "ball": 0, "stump": 0}
+    for detection in detections:
+        class_name = detection["class_name"]
+        if class_name in count:
+            count[class_name] += 1
+
+    inference_time = time.time() - start
+    logging.info(f"Count: {count}, Time: {inference_time:.3f}s")
+
+    return {
+        "count": count,
+        "total_objects": sum(count.values()),
+        "inference_time": inference_time
+    }

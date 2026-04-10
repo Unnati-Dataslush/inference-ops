@@ -183,3 +183,43 @@ def test_predict_video_returns_actual_video():
             files={"file": ("test_video.mp4", f, "video/mp4")}
         )
     assert "video" in response.headers["content-type"]
+
+
+# ─────────────────────────────────────────
+# Block 7 — /predict-count endpoint tests
+# ─────────────────────────────────────────
+
+# Checks that /predict-count responds without crashing for a valid image
+def test_predict_count_returns_200():
+    response = client.post(
+        "/predict-count",
+        files={"file": ("test.jpg", make_blank_image(), "image/jpeg")}
+    )
+    assert response.status_code == 200
+
+# Checks that response has count field
+def test_predict_count_has_count_field():
+    response = client.post(
+        "/predict-count",
+        files={"file": ("test.jpg", make_blank_image(), "image/jpeg")}
+    )
+    assert "count" in response.json()
+
+# Checks that count has bat, ball and stump keys
+def test_predict_count_has_correct_keys():
+    response = client.post(
+        "/predict-count",
+        files={"file": ("test.jpg", make_blank_image(), "image/jpeg")}
+    )
+    count = response.json()["count"]
+    assert "bat" in count
+    assert "ball" in count
+    assert "stump" in count
+
+# Checks that total_objects field exists
+def test_predict_count_has_total_objects():
+    response = client.post(
+        "/predict-count",
+        files={"file": ("test.jpg", make_blank_image(), "image/jpeg")}
+    )
+    assert "total_objects" in response.json()
