@@ -160,3 +160,26 @@ def test_predict_image_returns_actual_image():
         files={"file": ("test.jpg", make_blank_image(), "image/jpeg")}
     )
     assert "image" in response.headers["content-type"]
+
+
+# ─────────────────────────────────────────
+# Block 6 — /predict-video endpoint tests
+# ─────────────────────────────────────────
+
+# Checks that /predict-video responds without crashing for a valid MP4
+def test_predict_video_returns_200():
+    with open("tests/test_video.mp4", "rb") as f:
+        response = client.post(
+            "/predict-video",
+            files={"file": ("test_video.mp4", f, "video/mp4")}
+        )
+    assert response.status_code == 200
+
+# Checks that what comes back is actually a video and not JSON or text
+def test_predict_video_returns_actual_video():
+    with open("tests/test_video.mp4", "rb") as f:
+        response = client.post(
+            "/predict-video",
+            files={"file": ("test_video.mp4", f, "video/mp4")}
+        )
+    assert "video" in response.headers["content-type"]
