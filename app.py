@@ -11,7 +11,10 @@ import os
 import tempfile
 from fastapi.responses import FileResponse
 
+from prometheus_fastapi_instrumentator import Instrumentator
+
 app = FastAPI()
+Instrumentator().instrument(app).expose(app)
 
 # Logging setup
 logging.basicConfig(
