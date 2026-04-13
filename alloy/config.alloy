@@ -1,0 +1,18 @@
+prometheus.scrape "cricket_api" {
+  targets = [{
+    __address__ = "inference-api-ydmj.onrender.com",
+  }]
+  metrics_path = "/metrics"
+  scheme       = "https"
+  forward_to   = [prometheus.remote_write.grafana_cloud.receiver]
+}
+
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = "https://prometheus-prod-43-prod-ap-south-1.grafana.net/api/prom/push"
+    basic_auth {
+      username = "3105434"
+      password = env("GRAFANA_TOKEN")
+    }
+  }
+}
